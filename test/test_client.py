@@ -5,7 +5,6 @@ import btsync
 from responses import ResponseFixtures
 
 
-
 fixtures = ResponseFixtures()
 
 
