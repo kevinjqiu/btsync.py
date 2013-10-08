@@ -5,6 +5,14 @@ from nose.tools import eq_
 
 
 class TestClient(object):
+    def _make_client(self):
+        return btsync.Client(
+            host='127.0.0.1',
+            port='1106',
+            username='admin',
+            password='password',
+        )
+
     @mock.patch('btsync.client._current_timestamp')
     @mock.patch('btsync.client.requests.Session')
     def test_authenticate_should_send_auth_header_and_extract_token(
@@ -20,13 +28,22 @@ class TestClient(object):
             u"</div>"
             u"</html>".format(token=TOKEN))
 
-        client = btsync.Client(
-            host='127.0.0.1',
-            port='1106',
-            username='admin',
-            password='password',
-        )
+        client = self._make_client()
         eq_(mock_session.auth, ('admin', 'password'))
         eq_(mock_session.post.call_args_list,
             [mock.call('http://127.0.0.1:1106/gui/token.html?t=100000000')])
         eq_(TOKEN, client._token)
+
+    @mock.patch('btsync.client.Client._get_token')
+    @mock.patch('btsync.client._current_timestamp')
+    @mock.patch('btsync.client.requests.Session')
+    def test_get_os_type(self, session_class, current_timestamp, get_token):
+        current_timestamp.return_value = 999
+        session_class.return_value = mock_session = mock.Mock()
+        get_token.return_value = u'T'
+        mock_session.get.return_value.text = u'{ "os": "linux" }'
+
+        client = self._make_client()
+        eq_({'os': 'linux'}, client.get_os_type())
+        eq_([mock.call('http://127.0.0.1:1106/gui/?token=T&action=getostype&t=999')],
+            mock_session.get.call_args_list)

@@ -1,5 +1,6 @@
 import requests
 import time
+import json
 
 
 def _current_timestamp():
@@ -14,9 +15,13 @@ class Client(object):
         self._password = kwargs.pop('password')
         self._session = self._authenticate()
 
-    def _extract_token(self, text):
+    def _get_token(self, session):
+        response = session.post('http://{host}:{port}/gui/token.html?t={timestamp}'.format(
+            host=self._host, port=self._port, timestamp=_current_timestamp(),
+        ))
+        response.raise_for_status()
         return (
-            text
+            response.text
             .split("<html><div id='token' style='display:none;'>")[1]
             .split("</div></html>")[0]
         )
@@ -24,9 +29,11 @@ class Client(object):
     def _authenticate(self):
         session = requests.Session()
         session.auth = (self._username, self._password)
-        response = session.post('http://{host}:{port}/gui/token.html?t={timestamp}'.format(
-            host=self._host, port=self._port, timestamp=_current_timestamp(),
-        ))
-        response.raise_for_status()
-        self._token = self._extract_token(response.text)
+        self._token = self._get_token(session)
         return session
+
+    def get_os_type(self):
+        response = self._session.get('http://{host}:{port}/gui/?token={token}&action=getostype&t={timestamp}'.format(
+            host=self._host, port=self._port, token=self._token, timestamp=_current_timestamp()))
+        response.raise_for_status()
+        return json.loads(response.text)
