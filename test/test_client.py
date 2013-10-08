@@ -1,7 +1,12 @@
 from mock import call, patch, Mock
-import btsync
-
 from nose.tools import eq_
+
+import btsync
+from responses import ResponseFixtures
+
+
+
+fixtures = ResponseFixtures()
 
 
 class TestClient(object):
@@ -41,7 +46,7 @@ class TestClient(object):
         current_timestamp.return_value = 999
         session_class.return_value = mock_session = Mock()
         get_token.return_value = u'T'
-        mock_session.get.return_value.text = u'{ "os": "linux" }'
+        mock_session.get.return_value.text = fixtures.GETOSTYPE
 
         client = self._make_client()
         eq_('linux', client.os_type)
@@ -55,7 +60,7 @@ class TestClient(object):
         current_timestamp.return_value = 999
         session_class.return_value = mock_session = Mock()
         get_token.return_value = u'T'
-        mock_session.get.return_value.text = u'{ "version": "121" }'
+        mock_session.get.return_value.text = fixtures.GETVERSION
 
         client = self._make_client()
         eq_('121', client.version)
@@ -69,8 +74,7 @@ class TestClient(object):
         current_timestamp.return_value = 999
         session_class.return_value = mock_session = Mock()
         get_token.return_value = u'T'
-        mock_session.get.return_value.text = \
-            u'{ "version": { "url": "", "version": 0 } }'
+        mock_session.get.return_value.text = fixtures.CHECKNEWVERSION
 
         client = self._make_client()
         eq_({'url': '', 'version': 0}, client.new_version)
@@ -84,9 +88,7 @@ class TestClient(object):
         current_timestamp.return_value = 999
         session_class.return_value = mock_session = Mock()
         get_token.return_value = u'T'
-        mock_session.get.return_value.text = \
-            """{ "folders": [ { "iswritable": 1, "name": "\/home\/kevin\/Pictures\/Wallpapers", "peers": [ { "direct": 1, "name": "rpi", "status": "Synced on 10\/08\/13 11:21:30" } ], "readonlysecret": "B6FXQHUMT73WKIUKVBCHXKR3ROSO4SDJ7", "secret": "AZBMFUOSMAF7SKAE44MG3ILETMLY55VBG", "size": "353.9 MB in 256 files" } ], "speed": "0.0 kB\/s up, 0.0 kB\/s down" }"""
-
+        mock_session.get.return_value.text = fixtures.GETSYNCFOLDERS
         client = self._make_client()
         client.sync_folders
         # eq_({'url': '', 'version': 0}, client.new_version)
