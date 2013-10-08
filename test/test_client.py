@@ -105,3 +105,20 @@ class TestClient(object):
             }], client.sync_folders)
         eq_([call('http://127.0.0.1:1106/gui/?action=getsyncfolders&token=T&t=999')],
             mock_session.get.call_args_list)
+
+    @patch('btsync.client.Client._get_token')
+    @patch('btsync.client._current_timestamp')
+    @patch('btsync.client.requests.Session')
+    def test_generate_secret(
+            self, session_class, current_timestamp, get_token):
+        current_timestamp.return_value = 999
+        session_class.return_value = mock_session = Mock()
+        get_token.return_value = u'T'
+        mock_session.get.return_value.text = fixtures.GENERATESECRET
+
+        client = self._make_client()
+        secrets = client.generate_secret()
+        eq_('SECRET', secrets['secret'])
+        eq_('READONLY', secrets['rosecret'])
+        eq_([call('http://127.0.0.1:1106/gui/?action=generatesecret&token=T&t=999')],
+            mock_session.get.call_args_list)
