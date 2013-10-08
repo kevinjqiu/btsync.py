@@ -19,7 +19,7 @@ class Client(object):
     def _make_request(self, **kwargs):
         endpoint = kwargs.pop('endpoint', '')
         params = kwargs.pop('params', {})
-        with_token = kwargs.pop('with_token', False)
+        with_token = kwargs.pop('with_token', True)
         method = kwargs.pop('method', 'get')
         session = kwargs.pop('session', None)
 
@@ -44,7 +44,8 @@ class Client(object):
 
     def _get_token(self, session):
         response = self._make_request(
-            endpoint='token.html', method='post', session=session)
+            endpoint='token.html', method='post',
+            session=session, with_token=False)
         return (
             response.text
             .split("<html><div id='token' style='display:none;'>")[1]
@@ -59,5 +60,10 @@ class Client(object):
 
     def get_os_type(self):
         response = self._make_request(
-            params={'action': 'getostype'}, with_token=True)
-        return json.loads(response.text)
+            params={'action': 'getostype'})
+        return json.loads(response.text)['os']
+
+    def get_version(self):
+        response = self._make_request(
+            params={'action': 'getversion'})
+        return json.loads(response.text)['version']
