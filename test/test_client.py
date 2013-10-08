@@ -45,5 +45,5 @@ class TestClient(object):
 
         client = self._make_client()
         eq_({'os': 'linux'}, client.get_os_type())
-        eq_([call('http://127.0.0.1:1106/gui/?token=T&action=getostype&t=999')],
+        eq_([call('http://127.0.0.1:1106/gui/?action=getostype&token=T&t=999')],
             mock_session.get.call_args_list)

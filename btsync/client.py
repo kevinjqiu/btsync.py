@@ -1,6 +1,7 @@
 import requests
 import time
 import json
+import urllib
 
 
 def _current_timestamp():
@@ -15,11 +16,35 @@ class Client(object):
         self._password = kwargs.pop('password')
         self._session = self._authenticate()
 
-    def _get_token(self, session):
-        response = session.post('http://{host}:{port}/gui/token.html?t={timestamp}'.format(
-            host=self._host, port=self._port, timestamp=_current_timestamp(),
-        ))
+    def _make_request(self, **kwargs):
+        endpoint = kwargs.pop('endpoint', '')
+        params = kwargs.pop('params', {})
+        with_token = kwargs.pop('with_token', False)
+        method = kwargs.pop('method', 'get')
+        session = kwargs.pop('session', None)
+
+        params['t'] = _current_timestamp()
+        if with_token:
+            params['token'] = self._token
+
+        url = 'http://{host}:{port}/gui/{endpoint}?{qs}'.format(
+            host=self._host,
+            port=self._port,
+            endpoint=endpoint,
+            qs=urllib.urlencode(params),
+        )
+
+        method = getattr(
+            session if session is not None else self._session, method)
+        assert method is not None, 'Invalid method: %s' % method
+
+        response = method(url)
         response.raise_for_status()
+        return response
+
+    def _get_token(self, session):
+        response = self._make_request(
+            endpoint='token.html', method='post', session=session)
         return (
             response.text
             .split("<html><div id='token' style='display:none;'>")[1]
@@ -33,7 +58,6 @@ class Client(object):
         return session
 
     def get_os_type(self):
-        response = self._session.get('http://{host}:{port}/gui/?token={token}&action=getostype&t={timestamp}'.format(
-            host=self._host, port=self._port, token=self._token, timestamp=_current_timestamp()))
-        response.raise_for_status()
+        response = self._make_request(
+            params={'action': 'getostype'}, with_token=True)
         return json.loads(response.text)
