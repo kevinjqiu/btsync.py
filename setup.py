@@ -17,5 +17,5 @@ setup(name='btsync.py',
       include_package_data=True,
       zip_safe=False,
       install_requires=open('requirements.txt').readlines(),
-      entry_points=[],
+      entry_points={},
       )
