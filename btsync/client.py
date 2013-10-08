@@ -8,6 +8,14 @@ def _current_timestamp():
     return int(time.time() * 1000)
 
 
+def _make_action_method(action_name, key):
+    def getter(self):
+        response = self._make_request(
+            params={'action': action_name})
+        return json.loads(response.text)[key]
+    return getter
+
+
 class Client(object):
     def __init__(self, **kwargs):
         self._host = kwargs.pop('host')
@@ -58,12 +66,9 @@ class Client(object):
         self._token = self._get_token(session)
         return session
 
-    def get_os_type(self):
-        response = self._make_request(
-            params={'action': 'getostype'})
-        return json.loads(response.text)['os']
+    os_type = property(_make_action_method('getostype', key='os'))
 
-    def get_version(self):
-        response = self._make_request(
-            params={'action': 'getversion'})
-        return json.loads(response.text)['version']
+    version = property(_make_action_method('getversion', key='version'))
+
+    new_version = property(
+        _make_action_method('checknewversion', key='version'))

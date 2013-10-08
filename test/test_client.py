@@ -44,7 +44,7 @@ class TestClient(object):
         mock_session.get.return_value.text = u'{ "os": "linux" }'
 
         client = self._make_client()
-        eq_('linux', client.get_os_type())
+        eq_('linux', client.os_type)
         eq_([call('http://127.0.0.1:1106/gui/?action=getostype&token=T&t=999')],
             mock_session.get.call_args_list)
 
@@ -58,6 +58,21 @@ class TestClient(object):
         mock_session.get.return_value.text = u'{ "version": "121" }'
 
         client = self._make_client()
-        eq_('121', client.get_version())
+        eq_('121', client.version)
         eq_([call('http://127.0.0.1:1106/gui/?action=getversion&token=T&t=999')],
+            mock_session.get.call_args_list)
+
+    @patch('btsync.client.Client._get_token')
+    @patch('btsync.client._current_timestamp')
+    @patch('btsync.client.requests.Session')
+    def test_new_version(self, session_class, current_timestamp, get_token):
+        current_timestamp.return_value = 999
+        session_class.return_value = mock_session = Mock()
+        get_token.return_value = u'T'
+        mock_session.get.return_value.text = \
+            u'{ "version": { "url": "", "version": 0 } }'
+
+        client = self._make_client()
+        eq_({'url': '', 'version': 0}, client.new_version)
+        eq_([call('http://127.0.0.1:1106/gui/?action=checknewversion&token=T&t=999')],
             mock_session.get.call_args_list)
