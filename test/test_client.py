@@ -31,6 +31,10 @@ class TestClient(object):
     def _mock_response(self, method, response_text):
         getattr(self.mock_session, method).return_value.text = response_text
 
+    def assert_request_url(self, url, method='get'):
+        eq_([call(url)],
+            getattr(self.mock_session, method).call_args_list)
+
     def setup(self):
         self.current_timestamp = self._patch(
             'btsync.client._current_timestamp',
@@ -59,8 +63,8 @@ class TestClient(object):
         client = self._make_client()
 
         eq_(self.mock_session.auth, ('admin', 'password'))
-        eq_(self.mock_session.post.call_args_list,
-            [call('http://127.0.0.1:1106/gui/token.html?t=999')])
+        self.assert_request_url(
+            'http://127.0.0.1:1106/gui/token.html?t=999', method='post')
         eq_(TOKEN, client._token)
 
     def test_get_os_type(self):
@@ -70,8 +74,8 @@ class TestClient(object):
         client = self._make_client()
 
         eq_('linux', client.os_type)
-        eq_([call('http://127.0.0.1:1106/gui/?action=getostype&token=T&t=999')],
-            self.mock_session.get.call_args_list)
+        self.assert_request_url(
+            'http://127.0.0.1:1106/gui/?action=getostype&token=T&t=999')
 
     def test_get_version(self):
         self._mock_token(u'T')
@@ -80,8 +84,8 @@ class TestClient(object):
         client = self._make_client()
 
         eq_('121', client.version)
-        eq_([call('http://127.0.0.1:1106/gui/?action=getversion&token=T&t=999')],
-            self.mock_session.get.call_args_list)
+        self.assert_request_url(
+            'http://127.0.0.1:1106/gui/?action=getversion&token=T&t=999')
 
     def test_new_version(self):
         self._mock_token(u'T')
@@ -90,8 +94,8 @@ class TestClient(object):
         client = self._make_client()
 
         eq_({'url': '', 'version': 0}, client.new_version)
-        eq_([call('http://127.0.0.1:1106/gui/?action=checknewversion&token=T&t=999')],
-            self.mock_session.get.call_args_list)
+        self.assert_request_url(
+            'http://127.0.0.1:1106/gui/?action=checknewversion&token=T&t=999')
 
     def test_sync_folders(self):
         self._mock_token(u'T')
@@ -112,8 +116,8 @@ class TestClient(object):
             ],
             'readonlysecret': 'B' * 32
             }], client.sync_folders)
-        eq_([call('http://127.0.0.1:1106/gui/?action=getsyncfolders&token=T&t=999')],
-            self.mock_session.get.call_args_list)
+        self.assert_request_url(
+            'http://127.0.0.1:1106/gui/?action=getsyncfolders&token=T&t=999')
 
     def test_generate_secret(self):
         self._mock_token(u'T')
@@ -124,5 +128,4 @@ class TestClient(object):
         secrets = client.generate_secret()
         eq_('SECRET', secrets['secret'])
         eq_('READONLY', secrets['rosecret'])
-        eq_([call('http://127.0.0.1:1106/gui/?action=generatesecret&token=T&t=999')],
-            self.mock_session.get.call_args_list)
+        self.assert_request_url('http://127.0.0.1:1106/gui/?action=generatesecret&token=T&t=999')
