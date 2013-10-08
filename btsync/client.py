@@ -24,10 +24,10 @@ def _make_action_method(action_name, key=None):
 
 class Client(object):
     def __init__(self, **kwargs):
-        self._host = kwargs.pop('host')
-        self._port = kwargs.pop('port')
-        self._username = kwargs.pop('username')
-        self._password = kwargs.pop('password')
+        self._host = kwargs.pop('host', '127.0.0.1')
+        self._port = kwargs.pop('port', '8888')
+        self._username = kwargs.pop('username', 'admin')
+        self._password = kwargs.pop('password', 'password')
         self._session = self._authenticate()
 
     def _make_request(self, **kwargs):
