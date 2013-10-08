@@ -124,6 +124,4 @@ class Client(object):
     def generate_invite(self, name, secret, readonly=False):
         raise NotImplementedError
 
-    @property
-    def username(self):
-        raise NotImplementedError
+    username = property(_make_action_method('getusername', key='username'))

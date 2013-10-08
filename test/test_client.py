@@ -130,3 +130,13 @@ class TestClient(object):
         eq_('READONLY', secrets['rosecret'])
         self.assert_request_url(
             'http://127.0.0.1:1106/gui/?action=generatesecret&token=T&t=999')
+
+    def test_get_username(self):
+        self._mock_token(u'T')
+        self._mock_response('get', fixtures.GETUSERNAME)
+
+        client = self._make_client()
+
+        eq_('admin', client.username)
+        self.assert_request_url(
+            'http://127.0.0.1:1106/gui/?action=getusername&token=T&t=999')
