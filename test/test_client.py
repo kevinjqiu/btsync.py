@@ -89,7 +89,19 @@ class TestClient(object):
         get_token.return_value = u'T'
         mock_session.get.return_value.text = fixtures.GETSYNCFOLDERS
         client = self._make_client()
-        client.sync_folders
-        # eq_({'url': '', 'version': 0}, client.new_version)
+
+        eq_([{
+            'name': '/home/foo/bar',
+            'iswritable': 1,
+            'secret': 'A' * 32,
+            'size': '353.9 MB in 256 files',
+            'peers': [
+                {'direct': 1,
+                 'name': 'rpi',
+                 'status': 'Synced on 10/08/13 11:21:30'
+                 }
+            ],
+            'readonlysecret': 'B' * 32
+            }], client.sync_folders)
         eq_([call('http://127.0.0.1:1106/gui/?action=getsyncfolders&token=T&t=999')],
             mock_session.get.call_args_list)
