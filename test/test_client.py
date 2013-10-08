@@ -76,3 +76,19 @@ class TestClient(object):
         eq_({'url': '', 'version': 0}, client.new_version)
         eq_([call('http://127.0.0.1:1106/gui/?action=checknewversion&token=T&t=999')],
             mock_session.get.call_args_list)
+
+    @patch('btsync.client.Client._get_token')
+    @patch('btsync.client._current_timestamp')
+    @patch('btsync.client.requests.Session')
+    def test_sync_folders(self, session_class, current_timestamp, get_token):
+        current_timestamp.return_value = 999
+        session_class.return_value = mock_session = Mock()
+        get_token.return_value = u'T'
+        mock_session.get.return_value.text = \
+            """{ "folders": [ { "iswritable": 1, "name": "\/home\/kevin\/Pictures\/Wallpapers", "peers": [ { "direct": 1, "name": "rpi", "status": "Synced on 10\/08\/13 11:21:30" } ], "readonlysecret": "B6FXQHUMT73WKIUKVBCHXKR3ROSO4SDJ7", "secret": "AZBMFUOSMAF7SKAE44MG3ILETMLY55VBG", "size": "353.9 MB in 256 files" } ], "speed": "0.0 kB\/s up, 0.0 kB\/s down" }"""
+
+        client = self._make_client()
+        client.sync_folders
+        # eq_({'url': '', 'version': 0}, client.new_version)
+        eq_([call('http://127.0.0.1:1106/gui/?action=getsyncfolders&token=T&t=999')],
+            mock_session.get.call_args_list)
