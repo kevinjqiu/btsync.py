@@ -83,3 +83,47 @@ class Client(object):
         _make_action_method('getsyncfolders', key='folders'))
 
     generate_secret = _make_action_method('generatesecret')
+
+    def add_sync_folder(self, name, secret, force=False):
+        raise NotImplementedError
+
+    def remove_sync_folder(self, name, secret):
+        raise NotImplementedError
+
+    @property
+    def settings(self):
+        raise NotImplementedError
+
+    def set_settings(self, a, b):
+        raise NotImplementedError
+
+    def get_folder_preference(self, name, secret):
+        raise NotImplementedError
+
+    def set_folder_preference(self, name, a, b):
+        raise NotImplementedError
+
+    def get_hosts(self, name, secret):
+        raise NotImplementedError
+
+    def add_host(self, name, secret, address, port):
+        raise NotImplementedError
+
+    def remove_host(self, name, secret, index):
+        raise NotImplementedError
+
+    # def get_lang(self):
+    #     raise NotImplementedError
+
+    # def set_lang(self):
+    #     raise NotImplementedError
+
+    def update_secret(self, name, secret, new_secret):
+        raise NotImplementedError
+
+    def generate_invite(self, name, secret, readonly=False):
+        raise NotImplementedError
+
+    @property
+    def username(self):
+        raise NotImplementedError

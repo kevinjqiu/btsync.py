@@ -128,4 +128,5 @@ class TestClient(object):
         secrets = client.generate_secret()
         eq_('SECRET', secrets['secret'])
         eq_('READONLY', secrets['rosecret'])
-        self.assert_request_url('http://127.0.0.1:1106/gui/?action=generatesecret&token=T&t=999')
+        self.assert_request_url(
+            'http://127.0.0.1:1106/gui/?action=generatesecret&token=T&t=999')
