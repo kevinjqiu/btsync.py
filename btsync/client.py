@@ -8,13 +8,16 @@ def _current_timestamp():
     return int(time.time() * 1000)
 
 
-def _make_action_method(action_name, key):
+def _make_action_method(action_name, key=None):
     def getter(self):
         response = self._make_request(
             params={'action': action_name})
 
         result = json.loads(response.text)
-        return result[key]
+        if key is None:
+            return result
+        else:
+            return result[key]
 
     return getter
 
@@ -78,3 +81,5 @@ class Client(object):
 
     sync_folders = property(
         _make_action_method('getsyncfolders', key='folders'))
+
+    generate_secret = _make_action_method('generatesecret')
