@@ -24,6 +24,13 @@ class TestClient(object):
             password='password',
         )
 
+    def _mock_token(self, token):
+        self.get_token = self._patch('btsync.client.Client._get_token')
+        self.get_token.return_value = token
+
+    def _mock_response(self, method, response_text):
+        getattr(self.mock_session, method).return_value.text = response_text
+
     def setup(self):
         self.current_timestamp = self._patch(
             'btsync.client._current_timestamp',
@@ -41,7 +48,8 @@ class TestClient(object):
     def test_authenticate_should_send_auth_header_and_extract_token(self):
         TOKEN = \
             u"_0y2dsNVJ_ww1pPcfHxMpro6OLG73jHTWOob9kku9DRLhe-pz_M0a_lHVFIAAAAA"
-        self.mock_session.post.return_value.text = (
+        self._mock_response(
+            'post',
             u"<html>"
             u"<div id='token' style='display:none;'>"
             u"{token}"
@@ -55,10 +63,9 @@ class TestClient(object):
             [call('http://127.0.0.1:1106/gui/token.html?t=999')])
         eq_(TOKEN, client._token)
 
-    @patch('btsync.client.Client._get_token')
-    def test_get_os_type(self, get_token):
-        get_token.return_value = u'T'
-        self.mock_session.get.return_value.text = fixtures.GETOSTYPE
+    def test_get_os_type(self):
+        self._mock_token(u'T')
+        self._mock_response('get', fixtures.GETOSTYPE)
 
         client = self._make_client()
 
@@ -66,10 +73,9 @@ class TestClient(object):
         eq_([call('http://127.0.0.1:1106/gui/?action=getostype&token=T&t=999')],
             self.mock_session.get.call_args_list)
 
-    @patch('btsync.client.Client._get_token')
-    def test_get_version(self, get_token):
-        get_token.return_value = u'T'
-        self.mock_session.get.return_value.text = fixtures.GETVERSION
+    def test_get_version(self):
+        self._mock_token(u'T')
+        self._mock_response('get', fixtures.GETVERSION)
 
         client = self._make_client()
 
@@ -77,10 +83,9 @@ class TestClient(object):
         eq_([call('http://127.0.0.1:1106/gui/?action=getversion&token=T&t=999')],
             self.mock_session.get.call_args_list)
 
-    @patch('btsync.client.Client._get_token')
-    def test_new_version(self, get_token):
-        get_token.return_value = u'T'
-        self.mock_session.get.return_value.text = fixtures.CHECKNEWVERSION
+    def test_new_version(self):
+        self._mock_token(u'T')
+        self._mock_response('get', fixtures.CHECKNEWVERSION)
 
         client = self._make_client()
 
@@ -88,10 +93,9 @@ class TestClient(object):
         eq_([call('http://127.0.0.1:1106/gui/?action=checknewversion&token=T&t=999')],
             self.mock_session.get.call_args_list)
 
-    @patch('btsync.client.Client._get_token')
-    def test_sync_folders(self, get_token):
-        get_token.return_value = u'T'
-        self.mock_session.get.return_value.text = fixtures.GETSYNCFOLDERS
+    def test_sync_folders(self):
+        self._mock_token(u'T')
+        self._mock_response('get', fixtures.GETSYNCFOLDERS)
 
         client = self._make_client()
 
@@ -111,10 +115,9 @@ class TestClient(object):
         eq_([call('http://127.0.0.1:1106/gui/?action=getsyncfolders&token=T&t=999')],
             self.mock_session.get.call_args_list)
 
-    @patch('btsync.client.Client._get_token')
-    def test_generate_secret(self, get_token):
-        get_token.return_value = u'T'
-        self.mock_session.get.return_value.text = fixtures.GENERATESECRET
+    def test_generate_secret(self):
+        self._mock_token(u'T')
+        self._mock_response('get', fixtures.GENERATESECRET)
 
         client = self._make_client()
 
