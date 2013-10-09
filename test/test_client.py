@@ -240,3 +240,24 @@ class TestClient(object):
             '&iswritable=1&searchdht=0&usehosts=0&secret=SECRET'
             '&t=999&action=setfolderpref&readonlysecret=READONLY'
             '&usetracker=0&token=T')
+
+    def test_generate_invite(self):
+        self._mock_token()
+        self._mock_response('get', fixtures.GENERATEINVITE)
+
+        client = self._make_client()
+
+        eq_('INVITE_TOKEN', client.generate_invite('NAME', 'SECRET'))
+        self.assert_request_url(
+            '?action=generateinvite&secret=SECRET&name=NAME&token=T&t=999')
+
+    def test_generate_readonly_invite(self):
+        self._mock_token()
+        self._mock_response('get', fixtures.GENERATEROINVITE)
+
+        client = self._make_client()
+
+        eq_('READONLY_INVITE_TOKEN',
+            client.generate_invite('NAME', 'SECRET', readonly=True))
+        self.assert_request_url(
+            '?action=generateroinvite&secret=SECRET&name=NAME&token=T&t=999')

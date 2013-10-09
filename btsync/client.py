@@ -140,6 +140,13 @@ class Client(object):
         raise NotImplementedError
 
     def generate_invite(self, name, secret, readonly=False):
-        raise NotImplementedError
+        invite_action = (
+            'generateinvite' if not readonly else 'generateroinvite')
+        response = self._make_request(params={
+            'action': invite_action,
+            'name': name,
+            'secret': secret,
+        })
+        return json.loads(response.text)['invite']
 
     username = property(_make_action_method('getusername', key='username'))
