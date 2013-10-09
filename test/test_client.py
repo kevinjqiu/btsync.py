@@ -198,3 +198,6 @@ class TestClient(object):
             'http://127.0.0.1:1106/gui/?'
             'action=removefolder&secret=F00BA4&name=%2Ftmp&token=T&t=999'
         )
+
+    def test_settings(self):
+        pass
