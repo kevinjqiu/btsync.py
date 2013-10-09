@@ -16,6 +16,17 @@ A Python API client for BitTorrent Sync
 Installation
 ============
 
+Install from [PyPI](https://pypi.python.org):
+
+    pip install btsync.py
+
+Or Install from source:
+
+    git clone git@github.com:kevinjqiu/btsync.py.git
+    cd btsync.py
+    pip install -r requirements.txt
+    python setup.py install
+
 Examples
 ========
 
