@@ -43,9 +43,8 @@ class TestClient(object):
             getattr(self.mock_session, method).call_args_list)
 
     def setup(self):
-        self.current_timestamp = self._patch(
-            'btsync.client._current_timestamp',
-            return_value=999)
+        self.time = self._patch(
+            'btsync.client.time.time', return_value=0.999)
 
         self.mock_session = Mock()
         self.session_class = self._patch(
