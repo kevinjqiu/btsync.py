@@ -200,4 +200,17 @@ class TestClient(object):
         )
 
     def test_settings(self):
-        pass
+        self._mock_token()
+        self._mock_response('get', fixtures.GETSETTINGS)
+
+        client = self._make_client()
+
+        eq_({
+            'devicename': 'MBP',
+            'dlrate': 0,
+            'listeningport': 58156,
+            'portmapping': 1,
+            'ulrate': 0
+            }, client.settings)
+        self.assert_request_url(
+            'http://127.0.0.1:1106/gui/?action=getsettings&token=T&t=999')
