@@ -20,6 +20,32 @@ Installation
 Development
 ===========
 
+First, you need to setup a virtualenv, as it segregates local dependencies from the system libraries nicely:
+
+    $ virtualenv btsync.py-env
+
+Activate the virtual environment:
+
+    $ cd btsync.py-env
+    $ . btsync.py-env/bin/activate
+
+Clone this repo somewhere, e.g., `$HOME/src/btsync.py`:
+
+    $ git clone git@github.com:kevinjqiu/btsync.py.git
+    $ cd btsync.py
+
+Install dev dependencies:
+
+    $ pip install -r requirements-dev.txt
+
+Run tests:
+
+    $ fab test
+
+You can also generate the coverage report:
+
+    $ fab coverage
+
 
 License
 =======
