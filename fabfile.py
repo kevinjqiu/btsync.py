@@ -1,10 +1,17 @@
 from fabric.api import local
 
 
+def _run_coverage_for(kind):
+    assert kind in ('unit', 'integration')
+    test_folder = 'test/%s' % kind
+    local('coverage run --source=btsync,%(test_folder)s '
+          '$(which nosetests) %(test_folder)s' % dict(
+              test_folder=test_folder))
+
+
 def test():
     """Run unit tests"""
-    local('coverage run --source=btsync,test/unit '
-          '$(which nosetests) test/unit')
+    _run_coverage_for('unit')
 
 
 def coverage(kind):
@@ -16,5 +23,4 @@ def coverage(kind):
 
 def test_integration():
     """Run integration tests"""
-    local('coverage run --source=btsync,test/integration '
-          '$(which nosetests) test/integration')
+    _run_coverage_for('integration')
