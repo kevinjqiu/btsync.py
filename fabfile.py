@@ -7,12 +7,14 @@ def test():
           '$(which nosetests) test/unit')
 
 
-def coverage():
+def coverage(kind):
     """Run tests and show coverage report"""
-    test()
+    assert kind in ('unit', 'integration')
+    dict(unit=test, integration=test_integration)[kind]()
     local('coverage report -m')
 
 
 def test_integration():
     """Run integration tests"""
-    local('nosetests test/integration')
+    local('coverage run --source=btsync,test/integration '
+          '$(which nosetests) test/integration')
