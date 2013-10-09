@@ -20,6 +20,8 @@ CONFIG = {
     }
 }
 
+BTSYNC_EXECUTABLE = 'btsync'
+
 
 class TestIntegration(object):
     def setup(self):
@@ -34,7 +36,7 @@ class TestIntegration(object):
             json.dump(CONFIG, f)
 
         self.btsync_process = subprocess.Popen([
-            '/home/kevin/btsync/btsync', '--nodaemon',
+            BTSYNC_EXECUTABLE, '--nodaemon',
             '--config', config_file_name,
         ])
         time.sleep(0.5)
