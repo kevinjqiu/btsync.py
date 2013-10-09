@@ -137,7 +137,12 @@ class Client(object):
         self._make_request(params=params)
 
     def update_secret(self, name, secret, new_secret):
-        raise NotImplementedError
+        self._make_request(params={
+            'action': 'updatesecret',
+            'name': name,
+            'secret': secret,
+            'newsecret': new_secret,
+        })
 
     def generate_invite(self, name, secret, readonly=False):
         invite_action = (

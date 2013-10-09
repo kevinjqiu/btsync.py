@@ -261,3 +261,14 @@ class TestClient(object):
             client.generate_invite('NAME', 'SECRET', readonly=True))
         self.assert_request_url(
             '?action=generateroinvite&secret=SECRET&name=NAME&token=T&t=999')
+
+    def test_update_secret(self):
+        self._mock_token()
+        self._mock_response('get', fixtures.UPDATESECRET)
+
+        client = self._make_client()
+
+        client.update_secret('NAME', 'SECRET', 'NEWSECRET')
+        self.assert_request_url(
+            '?name=NAME&token=T&secret=SECRET&t=999'
+            '&action=updatesecret&newsecret=NEWSECRET')
