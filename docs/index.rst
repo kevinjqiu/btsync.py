@@ -6,6 +6,8 @@
 Welcome to btsync.py's documentation!
 =====================================
 
+btsync.py is a Python wrapper for BitTorrent sync API.
+
 Contents:
 
 .. toctree::
