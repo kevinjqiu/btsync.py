@@ -218,3 +218,25 @@ class TestClient(object):
             }, client.get_folder_preference('NAME', 'SECRET'))
         self.assert_request_url(
             '?action=getfolderpref&secret=SECRET&name=NAME&token=T&t=999')
+
+    def test_set_folder_preference(self):
+        self._mock_token()
+        self._mock_response('get', fixtures.SETFOLDERPREF)
+
+        client = self._make_client()
+
+        client.set_folder_preference('NAME', 'SECRET', **{
+            'searchlan': 0,
+            'usehosts': 0,
+            'relay': 1,
+            'deletetotrash': 1,
+            'iswritable': 1,
+            'searchdht': 0,
+            'readonlysecret': 'READONLY',
+            'usetracker': 0,
+        })
+        self.assert_request_url(
+            '?searchlan=0&name=NAME&relay=1&deletetotrash=1'
+            '&iswritable=1&searchdht=0&usehosts=0&secret=SECRET'
+            '&t=999&action=setfolderpref&readonlysecret=READONLY'
+            '&usetracker=0&token=T')

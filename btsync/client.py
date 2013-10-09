@@ -126,8 +126,15 @@ class Client(object):
         })
         return json.loads(response.text)['folderpref']
 
-    def set_folder_preference(self, name, a, b):
-        raise NotImplementedError
+    def set_folder_preference(self, name, secret, **prefs):
+        params = {
+            'action': 'setfolderpref',
+            'name': name,
+            'secret': secret,
+        }
+        params.update(prefs)
+
+        self._make_request(params=params)
 
     def update_secret(self, name, secret, new_secret):
         raise NotImplementedError
