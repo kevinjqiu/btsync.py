@@ -161,8 +161,6 @@ class TestClient(object):
         client = self._make_client()
 
         client.add_sync_folder('/tmp', 'F00BA4')
-        self.assert_request_url(
-            'action=addsyncfolder&secret=F00BA4&name=%2Ftmp&token=T&t=999')
 
     def test_add_sync_folder_force_succeeded(self):
         self._mock_token()
