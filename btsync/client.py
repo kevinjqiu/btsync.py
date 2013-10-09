@@ -124,15 +124,6 @@ class Client(object):
     def set_folder_preference(self, name, a, b):
         raise NotImplementedError
 
-    def get_hosts(self, name, secret):
-        raise NotImplementedError
-
-    def add_host(self, name, secret, address, port):
-        raise NotImplementedError
-
-    def remove_host(self, name, secret, index):
-        raise NotImplementedError
-
     def update_secret(self, name, secret, new_secret):
         raise NotImplementedError
 
