@@ -1,9 +1,9 @@
-import random
 import json
 import subprocess
 import tempfile
+import time
 
-from nose.tools import eq_
+from nose.tools import eq_, raises
 
 import btsync
 
@@ -27,20 +27,21 @@ class TestIntegration(object):
 
         _, config_file_name = tempfile.mkstemp()
 
-        port = random.randint(10000, 65535)
+        PORT = 59999
         with open(config_file_name, 'w') as f:
             CONFIG['storage_path'] = storage_path
-            CONFIG['webui']['listen'] = '0.0.0.0:%s' % port
+            CONFIG['webui']['listen'] = '0.0.0.0:%s' % PORT
             json.dump(CONFIG, f)
 
         self.btsync_process = subprocess.Popen([
             '/home/kevin/btsync/btsync', '--nodaemon',
             '--config', config_file_name,
         ])
+        time.sleep(0.5)
 
         self.client = btsync.Client(
             host='127.0.0.1',
-            port=port,
+            port=PORT,
             username='admin',
             password='password',
         )
@@ -67,3 +68,11 @@ class TestIntegration(object):
         eq_(folder_name, sync_folders[0]['name'])
         eq_(secret, sync_folders[0]['secret'])
         eq_(1, sync_folders[0]['iswritable'])
+
+    @raises(btsync.BtsyncException)
+    def test_add_sync_folder_folder_already_exists(self):
+        secret = self.client.generate_secret()['secret']
+        folder_name = tempfile.mkdtemp()
+        self.client.add_sync_folder(folder_name, secret)
+        eq_(1, len(self.client.sync_folders))
+        self.client.add_sync_folder(folder_name, secret)
