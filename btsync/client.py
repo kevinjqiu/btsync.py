@@ -107,11 +107,11 @@ class Client(object):
             raise BtsyncException(result)
 
     def remove_sync_folder(self, name, secret):
-        self._make_request(
-            params={'action': 'removefolder',
-                    'name': name,
-                    'secret': secret}
-        )
+        self._make_request(params={
+            'action': 'removefolder',
+            'name': name,
+            'secret': secret,
+        })
 
     settings = property(_make_action_method('getsettings', key='settings'))
 
@@ -119,7 +119,12 @@ class Client(object):
         raise NotImplementedError
 
     def get_folder_preference(self, name, secret):
-        raise NotImplementedError
+        response = self._make_request(params={
+            'action': 'getfolderpref',
+            'name': name,
+            'secret': secret,
+        })
+        return json.loads(response.text)['folderpref']
 
     def set_folder_preference(self, name, a, b):
         raise NotImplementedError

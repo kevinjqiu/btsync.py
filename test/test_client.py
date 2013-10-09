@@ -11,6 +11,11 @@ fixtures = ResponseFixtures()
 class TestClient(object):
     patchers = []
 
+    HOST = '127.0.0.1'
+    PORT = 1106
+    USERNAME = 'admin'
+    PASSWORD = 'password'
+
     def _patch(self, *args, **kwargs):
         patcher = patch(*args, **kwargs)
         self.patchers.append(patcher)
@@ -18,10 +23,10 @@ class TestClient(object):
 
     def _make_client(self):
         return btsync.Client(
-            host='127.0.0.1',
-            port='1106',
-            username='admin',
-            password='password',
+            host=self.HOST,
+            port=self.PORT,
+            username=self.USERNAME,
+            password=self.PASSWORD,
         )
 
     def _mock_token(self, token=u'T'):
@@ -31,7 +36,9 @@ class TestClient(object):
     def _mock_response(self, method, response_text):
         getattr(self.mock_session, method).return_value.text = response_text
 
-    def assert_request_url(self, url, method='get'):
+    def assert_request_url(self, rest_url, method='get'):
+        url = 'http://{host}:{port}/gui/{rest_url}'.format(
+            host=self.HOST, port=self.PORT, rest_url=rest_url)
         eq_([call(url)],
             getattr(self.mock_session, method).call_args_list)
 
@@ -65,8 +72,7 @@ class TestClient(object):
         client = self._make_client()
 
         eq_(self.mock_session.auth, ('admin', 'password'))
-        self.assert_request_url(
-            'http://127.0.0.1:1106/gui/token.html?t=999', method='post')
+        self.assert_request_url('token.html?t=999', method='post')
         eq_(TOKEN, client._token)
 
     def test_get_os_type(self):
@@ -76,8 +82,7 @@ class TestClient(object):
         client = self._make_client()
 
         eq_('linux', client.os_type)
-        self.assert_request_url(
-            'http://127.0.0.1:1106/gui/?action=getostype&token=T&t=999')
+        self.assert_request_url('?action=getostype&token=T&t=999')
 
     def test_get_version(self):
         self._mock_token()
@@ -86,8 +91,7 @@ class TestClient(object):
         client = self._make_client()
 
         eq_('121', client.version)
-        self.assert_request_url(
-            'http://127.0.0.1:1106/gui/?action=getversion&token=T&t=999')
+        self.assert_request_url('?action=getversion&token=T&t=999')
 
     def test_new_version(self):
         self._mock_token()
@@ -96,8 +100,7 @@ class TestClient(object):
         client = self._make_client()
 
         eq_({'url': '', 'version': 0}, client.new_version)
-        self.assert_request_url(
-            'http://127.0.0.1:1106/gui/?action=checknewversion&token=T&t=999')
+        self.assert_request_url('?action=checknewversion&token=T&t=999')
 
     def test_sync_folders(self):
         self._mock_token()
@@ -118,8 +121,7 @@ class TestClient(object):
             ],
             'readonlysecret': 'B' * 32
             }], client.sync_folders)
-        self.assert_request_url(
-            'http://127.0.0.1:1106/gui/?action=getsyncfolders&token=T&t=999')
+        self.assert_request_url('?action=getsyncfolders&token=T&t=999')
 
     def test_generate_secret(self):
         self._mock_token()
@@ -130,8 +132,7 @@ class TestClient(object):
         secrets = client.generate_secret()
         eq_('SECRET', secrets['secret'])
         eq_('READONLY', secrets['rosecret'])
-        self.assert_request_url(
-            'http://127.0.0.1:1106/gui/?action=generatesecret&token=T&t=999')
+        self.assert_request_url('?action=generatesecret&token=T&t=999')
 
     def test_get_username(self):
         self._mock_token()
@@ -140,8 +141,7 @@ class TestClient(object):
         client = self._make_client()
 
         eq_('admin', client.username)
-        self.assert_request_url(
-            'http://127.0.0.1:1106/gui/?action=getusername&token=T&t=999')
+        self.assert_request_url('?action=getusername&token=T&t=999')
 
     def test_add_sync_folder_succeeded(self):
         self._mock_token()
@@ -151,7 +151,6 @@ class TestClient(object):
 
         client.add_sync_folder('/tmp', 'F00BA4')
         self.assert_request_url(
-            'http://127.0.0.1:1106/gui/'
             '?action=addsyncfolder&secret=F00BA4&name=%2Ftmp&token=T&t=999')
 
     @raises(btsync.BtsyncException)
@@ -163,12 +162,7 @@ class TestClient(object):
 
         client.add_sync_folder('/tmp', 'F00BA4')
         self.assert_request_url(
-            'http://127.0.0.1:1106/gui/?'
-            'action=addsyncfolder'
-            '&secret=F00BA4'
-            '&name=%2Ftmp'
-            '&token=T&t=999'
-        )
+            'action=addsyncfolder&secret=F00BA4&name=%2Ftmp&token=T&t=999')
 
     def test_add_sync_folder_force_succeeded(self):
         self._mock_token()
@@ -178,14 +172,8 @@ class TestClient(object):
 
         client.add_sync_folder('/tmp', 'F00BA4', force=True)
         self.assert_request_url(
-            'http://127.0.0.1:1106/gui/?'
-            'force=1'
-            '&name=%2Ftmp'
-            '&token=T'
-            '&secret=F00BA4'
-            '&t=999'
-            '&action=addsyncfolder'
-        )
+            '?force=1&name=%2Ftmp&token=T&secret=F00BA4'
+            '&t=999&action=addsyncfolder')
 
     def test_remove_sync_folder(self):
         self._mock_token()
@@ -195,9 +183,7 @@ class TestClient(object):
 
         client.remove_sync_folder('/tmp', 'F00BA4')
         self.assert_request_url(
-            'http://127.0.0.1:1106/gui/?'
-            'action=removefolder&secret=F00BA4&name=%2Ftmp&token=T&t=999'
-        )
+            '?action=removefolder&secret=F00BA4&name=%2Ftmp&token=T&t=999')
 
     def test_settings(self):
         self._mock_token()
@@ -212,5 +198,23 @@ class TestClient(object):
             'portmapping': 1,
             'ulrate': 0
             }, client.settings)
+        self.assert_request_url('?action=getsettings&token=T&t=999')
+
+    def test_get_folder_preference(self):
+        self._mock_token()
+        self._mock_response('get', fixtures.GETFOLDERPREF)
+
+        client = self._make_client()
+
+        eq_({
+            "deletetotrash": 1,
+            "iswritable": 1,
+            "readonlysecret": "READONLY",
+            "relay": 1,
+            "searchdht": 0,
+            "searchlan": 1,
+            "usehosts": 0,
+            "usetracker": 1
+            }, client.get_folder_preference('NAME', 'SECRET'))
         self.assert_request_url(
-            'http://127.0.0.1:1106/gui/?action=getsettings&token=T&t=999')
+            '?action=getfolderpref&secret=SECRET&name=NAME&token=T&t=999')
