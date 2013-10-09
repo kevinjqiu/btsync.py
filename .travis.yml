@@ -7,6 +7,6 @@ install:
     - pip install -r requirements-dev.txt --use-mirrors
     - pip install .
 script:
-    coverage run --source=btsync,tests `which nosetests`
+    fab test
 after_success:
     coveralls
