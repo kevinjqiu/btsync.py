@@ -2,7 +2,7 @@ from fabric.api import local
 
 
 def test():
-    local('coverage run --source=btsync,test $(which nosetests) test/unit')
+    local('coverage run --source=btsync,test/unit $(which nosetests) test/unit')
 
 
 def coverage():
