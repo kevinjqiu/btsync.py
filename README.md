@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/kevinjqiu/btsync.py.png?branch=master)](https://travis-ci.org/kevinjqiu/btsync.py)
-
      ____   ______  _____ __ __  ____     __      ____  __ __ 
     |    \ |      |/ ___/|  |  ||    \   /  ]    |    \|  |  |
     |  o  )|      (   \_ |  |  ||  _  | /  /     |  o  )  |  |
@@ -8,6 +6,8 @@
     |     |  |  |  \    ||     ||  |  \     ||  ||  |  |     |
     |_____|  |__|   \___||____/ |__|__|\____||__||__|  |____/ 
                                                           
+
+[![Build Status](https://travis-ci.org/kevinjqiu/btsync.py.png?branch=master)](https://travis-ci.org/kevinjqiu/btsync.py)
 
 A Python API client for BitTorrent Sync
 
