@@ -1,5 +1,5 @@
 from mock import call, patch, Mock
-from nose.tools import eq_
+from nose.tools import eq_, raises
 
 import btsync
 from responses import ResponseFixtures
@@ -24,7 +24,7 @@ class TestClient(object):
             password='password',
         )
 
-    def _mock_token(self, token):
+    def _mock_token(self, token=u'T'):
         self.get_token = self._patch(
             'btsync.client.Client._get_token', return_value=token)
 
@@ -70,7 +70,7 @@ class TestClient(object):
         eq_(TOKEN, client._token)
 
     def test_get_os_type(self):
-        self._mock_token(u'T')
+        self._mock_token()
         self._mock_response('get', fixtures.GETOSTYPE)
 
         client = self._make_client()
@@ -80,7 +80,7 @@ class TestClient(object):
             'http://127.0.0.1:1106/gui/?action=getostype&token=T&t=999')
 
     def test_get_version(self):
-        self._mock_token(u'T')
+        self._mock_token()
         self._mock_response('get', fixtures.GETVERSION)
 
         client = self._make_client()
@@ -90,7 +90,7 @@ class TestClient(object):
             'http://127.0.0.1:1106/gui/?action=getversion&token=T&t=999')
 
     def test_new_version(self):
-        self._mock_token(u'T')
+        self._mock_token()
         self._mock_response('get', fixtures.CHECKNEWVERSION)
 
         client = self._make_client()
@@ -100,7 +100,7 @@ class TestClient(object):
             'http://127.0.0.1:1106/gui/?action=checknewversion&token=T&t=999')
 
     def test_sync_folders(self):
-        self._mock_token(u'T')
+        self._mock_token()
         self._mock_response('get', fixtures.GETSYNCFOLDERS)
 
         client = self._make_client()
@@ -122,7 +122,7 @@ class TestClient(object):
             'http://127.0.0.1:1106/gui/?action=getsyncfolders&token=T&t=999')
 
     def test_generate_secret(self):
-        self._mock_token(u'T')
+        self._mock_token()
         self._mock_response('get', fixtures.GENERATESECRET)
 
         client = self._make_client()
@@ -134,7 +134,7 @@ class TestClient(object):
             'http://127.0.0.1:1106/gui/?action=generatesecret&token=T&t=999')
 
     def test_get_username(self):
-        self._mock_token(u'T')
+        self._mock_token()
         self._mock_response('get', fixtures.GETUSERNAME)
 
         client = self._make_client()
@@ -144,11 +144,27 @@ class TestClient(object):
             'http://127.0.0.1:1106/gui/?action=getusername&token=T&t=999')
 
     def test_add_sync_folder_succeeded(self):
-        self._mock_token(u'T')
+        self._mock_token()
         self._mock_response('get', fixtures.ADDSYNCFOLDER_SUCCESS)
 
         client = self._make_client()
 
         client.add_sync_folder('/tmp', 'F00BA4')
         self.assert_request_url(
-            'http://127.0.0.1:1106/gui/?action=addsyncfolder&secret=F00BA4&name=%2Ftmp&token=T&t=999')
+            'http://127.0.0.1:1106/gui/'
+            '?action=addsyncfolder&secret=F00BA4&name=%2Ftmp&token=T&t=999')
+
+    @raises(btsync.BtsyncException)
+    def test_add_sync_folder_failed(self):
+        self._mock_token()
+        self._mock_response('get', fixtures.ADDSYNCFOLDER_ERROR)
+
+        client = self._make_client()
+
+        client.add_sync_folder('/tmp', 'F00BA4')
+        self.assert_request_url(
+            'http://127.0.0.1:1106/gui/'
+            '?action=addsyncfolder'
+            '&secret=F00BA4'
+            '&name=%2Ftmp'
+            '&token=T&t=999')
