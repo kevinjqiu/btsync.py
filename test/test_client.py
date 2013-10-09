@@ -12,9 +12,9 @@ class TestClient(object):
     patchers = []
 
     def _patch(self, *args, **kwargs):
-        patcher = patch(*args, **kwargs).start()
+        patcher = patch(*args, **kwargs)
         self.patchers.append(patcher)
-        return patcher
+        return patcher.start()
 
     def _make_client(self):
         return btsync.Client(
@@ -25,8 +25,8 @@ class TestClient(object):
         )
 
     def _mock_token(self, token):
-        self.get_token = self._patch('btsync.client.Client._get_token')
-        self.get_token.return_value = token
+        self.get_token = self._patch(
+            'btsync.client.Client._get_token', return_value=token)
 
     def _mock_response(self, method, response_text):
         getattr(self.mock_session, method).return_value.text = response_text
@@ -48,6 +48,8 @@ class TestClient(object):
     def teardown(self):
         for patcher in self.patchers:
             patcher.stop()
+
+        self.__class__.patchers = []
 
     def test_authenticate_should_send_auth_header_and_extract_token(self):
         TOKEN = \
@@ -140,3 +142,13 @@ class TestClient(object):
         eq_('admin', client.username)
         self.assert_request_url(
             'http://127.0.0.1:1106/gui/?action=getusername&token=T&t=999')
+
+    def test_add_sync_folder_succeeded(self):
+        self._mock_token(u'T')
+        self._mock_response('get', fixtures.ADDSYNCFOLDER_SUCCESS)
+
+        client = self._make_client()
+
+        client.add_sync_folder('/tmp', 'F00BA4')
+        self.assert_request_url(
+            'http://127.0.0.1:1106/gui/?action=addsyncfolder&secret=F00BA4&name=%2Ftmp&token=T&t=999')
