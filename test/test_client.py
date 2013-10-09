@@ -272,3 +272,21 @@ class TestClient(object):
         self.assert_request_url(
             '?name=NAME&token=T&secret=SECRET&t=999'
             '&action=updatesecret&newsecret=NEWSECRET')
+
+    def test_set_settings(self):
+        self._mock_token()
+        self._mock_response('get', fixtures.SETSETTINGS)
+
+        client = self._make_client()
+
+        client.set_settings(**{
+            'dlrate': 0,
+            'devicename': u'MBP',
+            'ulrate': 999,
+            'portmapping': 1,
+            'listeningport': 58156,
+        })
+        self.assert_request_url(
+            '?dlrate=0&devicename=MBP&token=T'
+            '&t=999&listeningport=58156&'
+            'action=setsettings&portmapping=1&ulrate=999')

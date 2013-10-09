@@ -115,8 +115,12 @@ class Client(object):
 
     settings = property(_make_action_method('getsettings', key='settings'))
 
-    def set_settings(self, a, b):
-        raise NotImplementedError
+    def set_settings(self, **settings):
+        params = {
+            'action': 'setsettings',
+        }
+        params.update(settings)
+        self._make_request(params=params)
 
     def get_folder_preference(self, name, secret):
         response = self._make_request(params={
@@ -133,7 +137,6 @@ class Client(object):
             'secret': secret,
         }
         params.update(prefs)
-
         self._make_request(params=params)
 
     def update_secret(self, name, secret, new_secret):
