@@ -186,3 +186,15 @@ class TestClient(object):
             '&t=999'
             '&action=addsyncfolder'
         )
+
+    def test_remove_sync_folder(self):
+        self._mock_token()
+        self._mock_response('get', fixtures.REMOVEFOLDER)
+
+        client = self._make_client()
+
+        client.remove_sync_folder('/tmp', 'F00BA4')
+        self.assert_request_url(
+            'http://127.0.0.1:1106/gui/?'
+            'action=removefolder&secret=F00BA4&name=%2Ftmp&token=T&t=999'
+        )

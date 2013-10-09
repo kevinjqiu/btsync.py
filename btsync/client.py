@@ -107,14 +107,11 @@ class Client(object):
             raise BtsyncException(result)
 
     def remove_sync_folder(self, name, secret):
-        response = self._make_request(
-            params={'action': 'addsyncfolder',
+        self._make_request(
+            params={'action': 'removefolder',
                     'name': name,
                     'secret': secret}
         )
-        result = json.loads(response.text)
-        if result['error']:
-            raise BtsyncException(result)
 
     settings = property(_make_action_method('getsettings', key='settings'))
 
