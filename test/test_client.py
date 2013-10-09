@@ -163,8 +163,26 @@ class TestClient(object):
 
         client.add_sync_folder('/tmp', 'F00BA4')
         self.assert_request_url(
-            'http://127.0.0.1:1106/gui/'
-            '?action=addsyncfolder'
+            'http://127.0.0.1:1106/gui/?'
+            'action=addsyncfolder'
             '&secret=F00BA4'
             '&name=%2Ftmp'
-            '&token=T&t=999')
+            '&token=T&t=999'
+        )
+
+    def test_add_sync_folder_force_succeeded(self):
+        self._mock_token()
+        self._mock_response('get', fixtures.ADDSYNCFOLDER_SUCCESS)
+
+        client = self._make_client()
+
+        client.add_sync_folder('/tmp', 'F00BA4', force=True)
+        self.assert_request_url(
+            'http://127.0.0.1:1106/gui/?'
+            'force=1'
+            '&name=%2Ftmp'
+            '&token=T'
+            '&secret=F00BA4'
+            '&t=999'
+            '&action=addsyncfolder'
+        )

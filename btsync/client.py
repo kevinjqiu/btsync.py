@@ -95,6 +95,18 @@ class Client(object):
     generate_secret = _make_action_method('generatesecret')
 
     def add_sync_folder(self, name, secret, force=False):
+        params = {'action': 'addsyncfolder',
+                  'name': name,
+                  'secret': secret}
+        if force:
+            params['force'] = 1
+
+        response = self._make_request(params=params)
+        result = json.loads(response.text)
+        if result['error']:
+            raise BtsyncException(result)
+
+    def remove_sync_folder(self, name, secret):
         response = self._make_request(
             params={'action': 'addsyncfolder',
                     'name': name,
@@ -103,9 +115,6 @@ class Client(object):
         result = json.loads(response.text)
         if result['error']:
             raise BtsyncException(result)
-
-    def remove_sync_folder(self, name, secret):
-        raise NotImplementedError
 
     settings = property(_make_action_method('getsettings', key='settings'))
 
