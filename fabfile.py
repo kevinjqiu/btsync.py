@@ -2,7 +2,7 @@ from fabric.api import local
 
 
 def _run_coverage_for(kind):
-    assert kind in ('unit', 'integration')
+    assert kind in ('unit', 'integration', '')
     test_folder = 'test/%s' % kind
     local('coverage run --source=btsync,%(test_folder)s '
           '$(which nosetests) %(test_folder)s' % dict(
@@ -14,10 +14,19 @@ def test():
     _run_coverage_for('unit')
 
 
+def test_all():
+    """Run both unit and integration tests"""
+    _run_coverage_for('')
+
+
 def coverage(kind):
     """Run tests and show coverage report"""
-    assert kind in ('unit', 'integration')
-    dict(unit=test, integration=test_integration)[kind]()
+    assert kind in ('unit', 'integration', 'all')
+    dict(
+        unit=test,
+        integration=test_integration,
+        all=test_all,
+    )[kind]()
     local('coverage report -m')
 
 

@@ -76,3 +76,12 @@ class TestIntegration(object):
         self.client.add_sync_folder(folder_name, secret)
         eq_(1, len(self.client.sync_folders))
         self.client.add_sync_folder(folder_name, secret)
+
+    def test_remove_sync_folder(self):
+        secret = self.client.generate_secret()['secret']
+        folder_name = tempfile.mkdtemp()
+        self.client.add_sync_folder(folder_name, secret)
+        eq_(1, len(self.client.sync_folders))
+
+        self.client.remove_sync_folder(folder_name, secret)
+        eq_(0, len(self.client.sync_folders))
