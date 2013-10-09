@@ -11,6 +11,7 @@ PORT = 37369
 CONFIG = {
     "device_name": "MY TESTING NODE",
     "listening_port": 0,
+    "storage_path": "",
     "webui":
     {
         "listen": "0.0.0.0:%s" % PORT,
@@ -22,9 +23,11 @@ CONFIG = {
 
 class TestIntegration(object):
     def setup(self):
+        storage_path = tempfile.mkdtemp()
         _, config_file_name = tempfile.mkstemp()
 
         with open(config_file_name, 'w') as f:
+            CONFIG['storage_path'] = storage_path
             json.dump(CONFIG, f)
 
         self.btsync_process = subprocess.Popen([
