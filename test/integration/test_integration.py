@@ -38,7 +38,7 @@ class TestIntegration(object):
         self.btsync_process = subprocess.Popen([
             BTSYNC_EXECUTABLE, '--nodaemon',
             '--config', config_file_name,
-        ])
+        ], stdout=open('/dev/null'))
         time.sleep(0.5)
 
         self.client = btsync.Client(
