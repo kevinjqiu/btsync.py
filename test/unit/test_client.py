@@ -222,7 +222,7 @@ class TestClient(object):
 
         client = self._make_client()
 
-        client.set_folder_preference('NAME', 'SECRET', **{
+        client.set_folder_preference('NAME', 'SECRET', {
             'searchlan': 0,
             'usehosts': 0,
             'relay': 1,
@@ -276,7 +276,7 @@ class TestClient(object):
 
         client = self._make_client()
 
-        client.set_settings(**{
+        client.set_settings({
             'dlrate': 0,
             'devicename': u'MBP',
             'ulrate': 999,

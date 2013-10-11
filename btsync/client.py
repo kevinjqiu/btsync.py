@@ -121,7 +121,7 @@ class Client(object):
             'action': 'getsettings',
         })['settings'])
 
-    def set_settings(self, **settings):
+    def set_settings(self, settings):
         params = {
             'action': 'setsettings',
         }
@@ -136,7 +136,7 @@ class Client(object):
         })
         return FolderPreference(**response['folderpref'])
 
-    def set_folder_preference(self, name, secret, **prefs):
+    def set_folder_preference(self, name, secret, prefs):
         params = {
             'action': 'setfolderpref',
             'name': name,
