@@ -89,3 +89,10 @@ class TestIntegration(object):
 
         self.client.remove_sync_folder(folder_name, secret)
         eq_(0, len(self.client.sync_folders))
+
+    def test_get_settings(self):
+        keys = set([
+            'dlrate', 'devicename', 'ulrate',
+            'portmapping', 'listeningport',
+        ])
+        eq_(keys, set(self.client.settings.keys()))
