@@ -2,29 +2,37 @@ class Model(dict):
     def __init__(self, **params):
         assert hasattr(self, 'FIELDS'), "Must define FIELDS"
 
-        for field in self.FIELDS:
+        for field, factory in self.FIELDS:
             value = params.pop(field)
-            self[field] = value
+            self[field] = factory(value)
 
         assert len(params) == 0, "Unrecognized params: %r" % params.keys()
 
 
 class Settings(Model):
     FIELDS = (
-        'dlrate',
-        'devicename',
-        'ulrate',
-        'portmapping',
-        'listeningport',
+        ('dlrate', int),
+        ('devicename', str),
+        ('ulrate', int),
+        ('portmapping', int),
+        ('listeningport', int),
+    )
+
+
+class Peer(Model):
+    FIELDS = (
+        ('direct', int),
+        ('name', str),
+        ('status', str),
     )
 
 
 class Folder(Model):
     FIELDS = (
-        'name',
-        'iswritable',
-        'secret',
-        'size'
-        'peers',
-        'readonlysecret'
+        ('name', str),
+        ('iswritable', int),
+        ('secret', str),
+        ('size', str),
+        ('peers', lambda peers: [Peer(**peer) for peer in peers]),
+        ('readonlysecret', str),
     )

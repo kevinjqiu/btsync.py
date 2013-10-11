@@ -3,28 +3,11 @@ import time
 import json
 import urllib
 
-from btsync.models import Settings
+from btsync.models import Settings, Folder
 
 
 def _current_timestamp():
     return int(time.time() * 1000)
-
-
-def _make_action_method(action_name, key=None, model_class=None):
-    def getter(self):
-        response = self._make_request(
-            params={'action': action_name})
-
-        result = json.loads(response.text)
-        if key is not None:
-            result = result[key]
-
-        if model_class is not None:
-            return model_class(**result)
-        else:
-            return result
-
-    return getter
 
 
 class BtsyncException(StandardError):
@@ -51,6 +34,7 @@ class Client(object):
         with_token = kwargs.pop('with_token', True)
         method = kwargs.pop('method', 'get')
         session = kwargs.pop('session', None)
+        is_json = kwargs.pop('is_json', True)
 
         params['t'] = _current_timestamp()
         if with_token:
@@ -69,14 +53,18 @@ class Client(object):
 
         response = method(url)
         response.raise_for_status()
-        return response
+
+        if is_json:
+            return json.loads(response.text)
+        else:
+            return response.text
 
     def _get_token(self, session):
-        response = self._make_request(
+        response_text = self._make_request(
             endpoint='token.html', method='post',
-            session=session, with_token=False)
+            session=session, with_token=False, is_json=False)
         return (
-            response.text
+            response_text
             .split("<html><div id='token' style='display:none;'>")[1]
             .split("</div></html>")[0]
         )
@@ -87,17 +75,27 @@ class Client(object):
         self._token = self._get_token(session)
         return session
 
-    os_type = property(_make_action_method('getostype', key='os'))
+    @property
+    def os_type(self):
+        return self._make_request(params={'action': 'getostype'})['os']
 
-    version = property(_make_action_method('getversion', key='version'))
+    @property
+    def version(self):
+        return self._make_request(params={'action': 'getversion'})['version']
 
-    new_version = property(
-        _make_action_method('checknewversion', key='version'))
+    @property
+    def new_version(self):
+        return self._make_request(params={'action': 'checknewversion'})['version']
 
-    sync_folders = property(
-        _make_action_method('getsyncfolders', key='folders'))
+    @property
+    def sync_folders(self):
+        folders = self._make_request(params={'action': 'getsyncfolders'})['folders']
+        return [
+            Folder(**folder) for folder in folders
+        ]
 
-    generate_secret = _make_action_method('generatesecret')
+    def generate_secret(self):
+        return self._make_request(params={'action': 'generatesecret'})
 
     def add_sync_folder(self, name, secret, force=False):
         params = {'action': 'addsyncfolder',
@@ -106,8 +104,7 @@ class Client(object):
         if force:
             params['force'] = 1
 
-        response = self._make_request(params=params)
-        result = json.loads(response.text)
+        result = self._make_request(params=params)
         if result['error']:
             raise BtsyncException(result)
 
@@ -118,8 +115,11 @@ class Client(object):
             'secret': secret,
         })
 
-    settings = property(_make_action_method(
-        'getsettings', key='settings', model_class=Settings))
+    @property
+    def settings(self):
+        return Settings(**self._make_request(params={
+            'action': 'getsettings',
+        })['settings'])
 
     def set_settings(self, **settings):
         params = {
@@ -134,7 +134,7 @@ class Client(object):
             'name': name,
             'secret': secret,
         })
-        return json.loads(response.text)['folderpref']
+        return response['folderpref']
 
     def set_folder_preference(self, name, secret, **prefs):
         params = {
@@ -161,6 +161,8 @@ class Client(object):
             'name': name,
             'secret': secret,
         })
-        return json.loads(response.text)['invite']
+        return response['invite']
 
-    username = property(_make_action_method('getusername', key='username'))
+    @property
+    def username(self):
+        return self._make_request(params={'action': 'getusername'})['username']
