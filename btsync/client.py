@@ -3,7 +3,7 @@ import time
 import json
 import urllib
 
-from btsync.models import Settings, Folder
+from btsync.models import Settings, Folder, FolderPreference
 
 
 def _current_timestamp():
@@ -134,7 +134,7 @@ class Client(object):
             'name': name,
             'secret': secret,
         })
-        return response['folderpref']
+        return FolderPreference(**response['folderpref'])
 
     def set_folder_preference(self, name, secret, **prefs):
         params = {

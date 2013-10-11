@@ -36,3 +36,16 @@ class Folder(Model):
         ('peers', lambda peers: [Peer(**peer) for peer in peers]),
         ('readonlysecret', str),
     )
+
+
+class FolderPreference(Model):
+    FIELDS = (
+        ('deletetotrash', int),
+        ("iswritable", int),
+        ("readonlysecret", str),
+        ("relay", int),
+        ("searchdht", int),
+        ("searchlan", int),
+        ("usehosts", int),
+        ("usetracker", int)
+    )
