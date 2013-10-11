@@ -11,6 +11,20 @@ class Model(dict):
 
 class Settings(Model):
     FIELDS = (
-        'dlrate', 'devicename', 'ulrate',
-        'portmapping', 'listeningport',
+        'dlrate',
+        'devicename',
+        'ulrate',
+        'portmapping',
+        'listeningport',
+    )
+
+
+class Folder(Model):
+    FIELDS = (
+        'name',
+        'iswritable',
+        'secret',
+        'size'
+        'peers',
+        'readonlysecret'
     )
