@@ -96,3 +96,17 @@ class TestIntegration(object):
             'portmapping', 'listeningport',
         ])
         eq_(keys, set(self.client.settings.keys()))
+
+    def test_set_settings(self):
+        yield self._assert_settings, 'dlrate', 99
+        yield self._assert_settings, 'devicename', 'FOOBAR'
+        yield self._assert_settings, 'ulrate', 88
+        yield self._assert_settings, 'portmapping', 0
+        yield self._assert_settings, 'listeningport', 65535
+
+    def _assert_settings(self, key, value):
+        settings = self.client.settings
+        settings[key] = value
+        self.client.set_settings(settings)
+        new_settings = self.client.settings
+        eq_(value, new_settings[key])
