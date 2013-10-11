@@ -139,6 +139,9 @@ To run coverage for integration tests:
 
     $ fab coverage:integration
 
+You can also change the port the btsync instance for integration test runs on (the default port is 59999):
+
+    $ BTSYNC_PORT=55555 fab test_integration
 
 License
 =======

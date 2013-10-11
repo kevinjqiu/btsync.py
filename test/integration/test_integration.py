@@ -23,6 +23,7 @@ CONFIG = {
 
 
 BTSYNC_EXECUTABLE = os.environ.get('BTSYNC', 'btsync')
+PORT = os.environ.get('BTSYNC_PORT', 59999)
 
 
 class TestIntegration(object):
@@ -31,7 +32,6 @@ class TestIntegration(object):
 
         _, config_file_name = tempfile.mkstemp()
 
-        PORT = 59999
         with open(config_file_name, 'w') as f:
             CONFIG['storage_path'] = storage_path
             CONFIG['webui']['listen'] = '0.0.0.0:%s' % PORT
