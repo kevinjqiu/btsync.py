@@ -127,9 +127,13 @@ You can also generate the coverage report:
 
     $ fab coverage
 
-To run integration tests, you need to have `btsync` executable on your `$PATH`, or change `test/integration/test_integration.py` to point it to your btsync path, then invoke:
+To run integration tests, you need to have `btsync` executable on your `$PATH`:
 
     $ fab test_integration
+
+Optionally, you can set an environment variable `BTSYNC` before running the test:
+
+    $ BTSYNC=$HOME/btsync/btsync fab test_integration
 
 To run coverage for integration tests:
 
