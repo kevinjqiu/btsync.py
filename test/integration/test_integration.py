@@ -1,3 +1,4 @@
+import os
 import json
 import subprocess
 import tempfile
@@ -20,7 +21,8 @@ CONFIG = {
     }
 }
 
-BTSYNC_EXECUTABLE = 'btsync'
+
+BTSYNC_EXECUTABLE = os.environ.get('BTSYNC', 'btsync')
 
 
 class TestIntegration(object):
