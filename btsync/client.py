@@ -3,21 +3,26 @@ import time
 import json
 import urllib
 
+from btsync.models import Settings
+
 
 def _current_timestamp():
     return int(time.time() * 1000)
 
 
-def _make_action_method(action_name, key=None):
+def _make_action_method(action_name, key=None, model_class=None):
     def getter(self):
         response = self._make_request(
             params={'action': action_name})
 
         result = json.loads(response.text)
-        if key is None:
-            return result
+        if key is not None:
+            result = result[key]
+
+        if model_class is not None:
+            return model_class(**result)
         else:
-            return result[key]
+            return result
 
     return getter
 
@@ -113,7 +118,8 @@ class Client(object):
             'secret': secret,
         })
 
-    settings = property(_make_action_method('getsettings', key='settings'))
+    settings = property(_make_action_method(
+        'getsettings', key='settings', model_class=Settings))
 
     def set_settings(self, **settings):
         params = {

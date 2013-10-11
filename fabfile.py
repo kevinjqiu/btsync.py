@@ -19,7 +19,7 @@ def test_all():
     _run_coverage_for('')
 
 
-def coverage(kind):
+def coverage(kind='unit'):
     """Run tests and show coverage report"""
     assert kind in ('unit', 'integration', 'all')
     dict(
