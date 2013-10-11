@@ -32,3 +32,14 @@ class TestModels(object):
         foo = FooModel(a=1, b='2')
         eq_(1, foo['a'])
         eq_('2', foo['b'])
+
+    def test_params_provided_fewer_than_declared(self):
+        class FooModel(Model):
+            FIELDS = (
+                ('a', int),
+                ('b', str),
+            )
+
+        foo = FooModel(a=1)
+        eq_(1, foo['a'])
+        assert not ('b' in foo)

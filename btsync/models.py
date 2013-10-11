@@ -3,8 +3,9 @@ class Model(dict):
         assert hasattr(self, 'FIELDS'), "Must define FIELDS"
 
         for field, factory in self.FIELDS:
-            value = params.pop(field)
-            self[field] = factory(value)
+            if field in params:
+                value = params.pop(field)
+                self[field] = factory(value)
 
         assert len(params) == 0, "Unrecognized params: %r" % params.keys()
 
@@ -32,6 +33,7 @@ class Folder(Model):
         ('name', str),
         ('iswritable', int),
         ('secret', str),
+        ('readonlysecret', str),
         ('size', str),
         ('peers', lambda peers: [Peer(**peer) for peer in peers]),
         ('readonlysecret', str),
