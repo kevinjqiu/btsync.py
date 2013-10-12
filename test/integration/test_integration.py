@@ -110,3 +110,22 @@ class TestIntegration(object):
         self.client.set_settings(settings)
         new_settings = self.client.settings
         eq_(value, new_settings[key])
+
+    def test_set_folder_preference(self):
+        for flag in (0, 1):
+            yield self._assert_set_folder_preference, 'deletetotrash', flag
+            yield self._assert_set_folder_preference, 'relay', flag
+            yield self._assert_set_folder_preference, 'searchdht', flag
+            yield self._assert_set_folder_preference, 'searchlan', flag
+            yield self._assert_set_folder_preference, 'usehosts', flag
+            yield self._assert_set_folder_preference, 'usetracker', flag
+
+    def _assert_set_folder_preference(self, key, value):
+        secret = self.client.generate_secret()['secret']
+        folder_name = tempfile.mkdtemp()
+        self.client.add_sync_folder(folder_name, secret)
+        preference = self.client.get_folder_preference(folder_name, secret)
+        preference[key] = value
+        self.client.set_folder_preference(folder_name, secret, preference)
+        new_pref = self.client.get_folder_preference(folder_name, secret)
+        eq_(value, new_pref[key])
