@@ -37,6 +37,7 @@ class Folder(Model):
         ('size', str),
         ('peers', lambda peers: [Peer(**peer) for peer in peers]),
         ('readonlysecret', str),
+        ('secrettype', int),
     )
 
 
