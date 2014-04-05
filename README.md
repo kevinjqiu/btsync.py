@@ -147,4 +147,4 @@ You can also change the port the btsync instance for integration test runs on (t
 License
 =======
 
-See [license.txt](license.txt)
+See [LICENSE](license.txt)
