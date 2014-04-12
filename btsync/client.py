@@ -21,11 +21,27 @@ class BtsyncException(StandardError):
 
 
 class Client(object):
+    """
+    Client
+    ~~~~~~
+
+    The client that talks to the hosted btsync instance.
+    """
     def __init__(self, **kwargs):
+        """Constructor
+
+        :params host: the host of the btsync instance to talk to
+        :param port: the port of the btsync instance to talk to
+        :param username: the admin username for the btsync instance
+        :param password: the admin password for the btsync instance
+        """
         self._host = kwargs.pop('host', '127.0.0.1')
         self._port = kwargs.pop('port', '8888')
         self._username = kwargs.pop('username', 'admin')
         self._password = kwargs.pop('password', 'password')
+
+        assert len(kwargs.keys()) == 0, \
+            "Unrecognized params: %r" % kwargs.keys()
         self._session = self._authenticate()
 
     def _make_request(self, **kwargs):
