@@ -1,11 +1,21 @@
 from mock import call, patch, Mock
-from nose.tools import eq_, raises
+from nose.tools import eq_, raises, assert_raises
 
 import btsync
 from responses import ResponseFixtures
 
 
 fixtures = ResponseFixtures()
+
+
+def test_unrecognized_params_used_to_construct_client():
+    with assert_raises(AssertionError) as e:
+        btsync.Client(host='192.168.1.1',
+                      port='5555',
+                      user='admin',
+                      pwd='admin')
+    eq_("Unrecognized params: ['pwd', 'user']",
+        str(e.exception))
 
 
 class TestClient(object):
