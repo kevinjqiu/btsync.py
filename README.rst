@@ -193,7 +193,7 @@ License
 See `LICENSE <https://raw.githubusercontent.com/kevinjqiu/btsync.py/master/LICENSE>`__.
 
 
-.. |Build Status| .. image:: https://travis-ci.org/kevinjqiu/btsync.py.svg?branch=master
+.. |Build Status| image:: https://travis-ci.org/kevinjqiu/btsync.py.svg?branch=master
     :target: https://travis-ci.org/kevinjqiu/btsync.py
 
 .. |Coverage Status| image:: https://coveralls.io/repos/kevinjqiu/btsync.py/badge.png?branch=master
