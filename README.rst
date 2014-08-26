@@ -110,7 +110,6 @@ Add a sync folder:
 .. code-block:: python
 
     >>> client.add_sync_folder('/tmp', secret['rosecret'])
-
     >>> pprint.pprint(client.sync_folders[1])
     {u'iswritable': 0,
     u'name': u'/tmp',
