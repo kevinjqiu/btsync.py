@@ -6,7 +6,7 @@ version = '0.9.8'
 setup(name='btsync.py',
       version=version,
       description="A Python API client for BitTorrent Sync",
-      long_description=open('README.md').read(),
+      long_description=open('README.rst').read(),
       classifiers=[
           'Intended Audience :: Developers',
           'Environment :: Console',
