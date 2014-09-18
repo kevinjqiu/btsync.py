@@ -17,7 +17,7 @@ class BtsyncException(StandardError):
         self.message = error['message']
 
     def __str__(self):
-        return self.message
+        return self.message  # pragma: no cover
 
 
 class Client(object):
