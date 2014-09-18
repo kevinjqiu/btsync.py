@@ -93,19 +93,23 @@ class Client(object):
 
     @property
     def os_type(self):
-        return self._make_request(params={'action': 'getostype'})['os']
+        return self._make_request(
+            params={'action': 'getostype'}).get('os', None)
 
     @property
     def version(self):
-        return self._make_request(params={'action': 'getversion'})['version']
+        return self._make_request(
+            params={'action': 'getversion'}).get('version', None)
 
     @property
     def new_version(self):
-        return self._make_request(params={'action': 'checknewversion'})['version']
+        return self._make_request(
+            params={'action': 'checknewversion'}).get('version', None)
 
     @property
     def sync_folders(self):
-        folders = self._make_request(params={'action': 'getsyncfolders'})['folders']
+        folders = self._make_request(
+            params={'action': 'getsyncfolders'}).get('folders', [])
         return [
             Folder(**folder) for folder in folders
         ]
