@@ -38,6 +38,13 @@ class Folder(Model):
         ('peers', lambda peers: [Peer(**peer) for peer in peers]),
         ('readonlysecret', str),
         ('secrettype', int),
+        ('files', int),
+        ('status', str),
+        ('last_modified', str),
+        ('indexing', bool),
+        ('has_key', bool),
+        ('error', str),
+        ('date_added', str),
     )
 
 
