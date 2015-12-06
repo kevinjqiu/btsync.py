@@ -3,7 +3,7 @@ from fabric.api import local
 
 def _run_coverage_for(kind):
     assert kind in ('unit', 'integration', '')
-    test_folder = 'test/%s' % kind
+    test_folder = 'test/{0!s}'.format(kind)
     local('coverage run --source=btsync,%(test_folder)s '
           '$(which nosetests) %(test_folder)s' % dict(
               test_folder=test_folder))
