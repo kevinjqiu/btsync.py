@@ -7,7 +7,7 @@ class Model(dict):
                 value = params.pop(field)
                 self[field] = factory(value)
 
-        assert len(params) == 0, "Unrecognized params: %r" % params.keys()
+        assert len(params) == 0, "Unrecognized params: {0!r}".format(params.keys())
 
 
 class Settings(Model):
