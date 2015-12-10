@@ -41,7 +41,7 @@ class Client(object):
         self._password = kwargs.pop('password', 'password')
 
         assert len(kwargs.keys()) == 0, \
-            "Unrecognized params: %r" % kwargs.keys()
+            "Unrecognized params: {0!r}".format(kwargs.keys())
         self._session = self._authenticate()
 
     def _make_request(self, **kwargs):
@@ -65,7 +65,7 @@ class Client(object):
 
         method = getattr(
             session if session is not None else self._session, method)
-        assert method is not None, 'Invalid method: %s' % method
+        assert method is not None, 'Invalid method: {0!s}'.format(method)
 
         response = method(url)
         response.raise_for_status()

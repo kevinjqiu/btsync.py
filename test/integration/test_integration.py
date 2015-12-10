@@ -34,7 +34,7 @@ class TestIntegration(object):
 
         with open(config_file_name, 'w') as f:
             CONFIG['storage_path'] = storage_path
-            CONFIG['webui']['listen'] = '0.0.0.0:%s' % PORT
+            CONFIG['webui']['listen'] = '0.0.0.0:{0!s}'.format(PORT)
             json.dump(CONFIG, f)
 
         self.btsync_process = subprocess.Popen([
